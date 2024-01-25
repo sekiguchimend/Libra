@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase掲示板</title>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #1f1f1f;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #ff4081;
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        #messages {
+            max-width: 800px;
+            width: 100%;
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #282c35;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        input,
+        button {
+            margin-bottom: 15px;
+            padding: 15px;
+            font-size: 18px;
+            border: none;
+            background-color: #333;
+            color: #ddd;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        input:focus,
+        button:focus {
+            background-color: #555;
+            color: #fff;
+            outline: none;
+        }
+
+        button {
+            background-color: #ff4081;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #d81b60;
+        }
+
+        #messages div {
+            margin-bottom: 15px;
+        }
+
+        #messages strong {
+            color: #ff4081;
+            font-size: 20px;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        #messages span {
+            color: #bdbdbd;
+            font-size: 16px;
+            margin-left: 5px;
+            display: block;
+        }
+
+        .class {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .class img {
+            margin-right: 15px;
+        }
+
+        @media only screen and (max-width: 600px) {
+            h1 {
+                font-size: 24px;
+            }
+
+            #messages {
+                max-width: 80%;
+                padding: 10px;
+            }
+
+            form {
+                padding: 0 10px;
+                max-width: 70%;
+              
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="class">
+        <a href="anime.html"><img src="home.png" alt="phot" width="50" style="margin-top: 10px;"></a>
+        <h1>meeting</h1>
+    </div>
+    <div id="messages"></div>
+
+    <form id="messageForm">
+        <input type="text" id="username" placeholder="ユーザー名" style="border-bottom: 2px solid #ff4081; color: #ddd;">
+        <input type="text" id="message" placeholder="メッセージ" style="border-bottom: 2px solid #ff4081; color: #ddd;">
+        <button type="button" onclick="sendMessage()" style="background-color: #ff4081; color: #ddd;">投稿</button>
+    </form>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+        import { getDatabase, ref, onChildAdded, push as pushDatabase, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCL-XFlKGajqGek3xQj8Zqu3wvNizs18I8",
+            authDomain: "shunya-d9370.firebaseapp.com",
+            databaseURL: "https://shunya-d9370-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "shunya-d9370",
+            storageBucket: "shunya-d9370.appspot.com",
+            messagingSenderId: "65355454886",
+            appId: "1:65355454886:web:87646c59131d23af385767",
+            measurementId: "G-RJ6MZNM6FV"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const messagesRef = ref(database, "messages");
+
+        let username = "";
+        let currentBlueUser = null;
+
+        function displayMessages(snapshot) {
+            const message = snapshot.val();
+            displayMessage(message.username, message.message, message.timestamp, message.isCurrentUserBlue);
+            scrollToBottom();
+        }
+
+        onChildAdded(messagesRef, displayMessages);
+
+        document.addEventListener('DOMContentLoaded', function () {
+            scrollToBottom();
+        });
+
+        window.sendMessage = function () {
+            if (!username) {
+                username = document.getElementById("username").value;
+                document.getElementById("username").readOnly = true;
+            }
+
+            const message = document.getElementById("message").value;
+
+            if (username && message) {
+                const isCurrentUserBlue = username === currentBlueUser;
+                pushDatabase(messagesRef, {
+                    username: username,
+                    message: message,
+                    timestamp: serverTimestamp(),
+                    isCurrentUserBlue: isCurrentUserBlue
+                }).then(() => {
+                    document.getElementById("message").value = "";
+                }).catch((error) => {
+                    console.error("Firebaseへのメッセージ書き込みエラー:", error);
+                });
+            }
+        };
+
+        function displayMessage(username, message, timestamp, isCurrentUserBlue) {
+            const messagesDiv = document.getElementById("messages");
+            const messageDiv = document.createElement("div");
+            const messageTime = new Date(timestamp).toLocaleTimeString();
+            const userClass = isCurrentUserBlue ? "blue-text" : "";
+            messageDiv.innerHTML = `<strong class="${userClass}">${username} (${messageTime}):</strong> ${message}`;
+            messagesDiv.appendChild(messageDiv);
+
+            if (isCurrentUserBlue) {
+                setTimeout(() => {
+                    currentBlueUser = null;
+                    applyBlueUserStyles();
+                }, 180000); // 3分後に青のスタイルを解除
+            }
+        }
+
+        function scrollToBottom() {
+            const messagesDiv = document.getElementById("messages");
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function applyBlueUserStyles() {
+            const allMessages = document.querySelectorAll("#messages div");
+            allMessages.forEach((messageDiv) => {
+                messageDiv.classList.remove("blue-text");
+            });
+
+            if (currentBlueUser !== null) {
+                const blueUserMessages = document.querySelectorAll(`#messages div.${currentBlueUser}`);
+                blueUserMessages.forEach((messageDiv) => {
+                    messageDiv.classList.add("blue-text");
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>

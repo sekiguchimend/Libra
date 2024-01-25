@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Libra</title>
+  <link rel="icon" href="aicon.png" type="image/x-icon">
+  <meta name="description" content="血界戦線のLibraという組織をオマージュして作りました。血界戦線のLibraのようにメンバー一人一人が目的をもって行動するようにしています。">
+  <meta name="keywords" content="血界戦線, Libra, ライブラ">
+
+  <style>
+    /* タイピングアニメーションのスタイル */
+    body {
+      background-image: url('kekkai.png');
+      background-color:rgb(2, 27, 2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      flex-direction: column; /* コンテンツを縦に配置するための追加 */
+      
+    }
+  
+    
+
+    .typing-text {
+      overflow: hidden;
+      white-space: nowrap; /* テキストが改行されないように */
+      font-size: 3.0em;
+      font-family: 'Courier New', monospace; /* 等幅フォントを使用 */
+      margin-bottom: 20px; /* 文章の間隔を調整 */
+      color: darkgreen;
+      font-family: serif;
+      text-shadow: 0 0 5px rgb(0, 100, 0); /* 文字の周りにぼかしをかける */
+      font-weight: bolder;
+    }
+    .button_line004 a {
+        font-size: 2.0em;
+        position: fixed;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 0 auto;
+    max-width: 200px;
+    padding: 10px 25px;
+    color: #313131;
+    transition: 0.3s ease-in-out;
+    font-weight: 600;
+    font-family: serif;
+}
+.button_line004 a:before,
+.button_line004 a:after {
+	content: '';
+	width: 18px;
+	height: 18px;
+	border-color:green;
+	box-sizing: border-box;
+	border-style :solid;
+	display: block;
+	position: absolute;
+	transition: all 0.3s ease-in-out;
+}
+.button_line004 a:before {
+	top: -6px;
+	left: -6px;
+	border-width: 2px 0 0 2px;
+	z-index: 5;
+}
+.button_line004 a:after {
+	bottom: -6px;
+	right: -6px;
+	border-width: 0 2px 2px 0;
+}
+.button_line004 a:hover:before,
+.button_line004 a:hover:after {
+	width: calc(100% + 12px);
+	height: calc(100% + 12px);
+	border-color:green;
+}
+.button_line004 a:hover {
+	color: #fff;
+	background-color:green;
+	border-color: green;
+}
+    @media (max-width: 768px) {
+      .typing-text {
+        font-size: 0.9em; /* スマホ用のフォントサイズ */
+      }
+      .button_line004 {
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    font-size: 0.6em;
+  }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="typing-text" id="typing-text1"></div>
+  <div class="typing-text" id="typing-text2"></div>
+  <div class="typing-text" id="typing-text3"></div>
+  <div class="typing-text" id="typing-text4"></div>
+  <div class="typing-text" id="typing-text5"></div>
+  <div class="button_line004">
+    <a href="anime.html">start</a>
+  </div>
+  <script>
+    const texts = ["ライブラ[Libra]【名詞】", "HL(ヘルサルムズ・ロッド)に於いて世界の均衡を保つ", "という名目で暗躍する超人秘密結社", "その全体像は全く掴めておらず、もしひとたび正確な","情報が流れれば、闇の世界から億の買値すら付くという。"];
+    let indices = [0, 0, 0, 0,0];
+
+    function typeWriter(element, index) {
+      element.textContent += texts[index][indices[index]];
+
+      indices[index]++;
+
+      if (indices[index] < texts[index].length) {
+        setTimeout(() => typeWriter(element, index), 80); // 200ミリ秒ごとに次の文字を表示
+      } else {
+        // 上の段が終わったら、次の段に移るために1秒待つ
+        setTimeout(() => {
+          // 次の段があれば実行
+          if (index < texts.length - 1) {
+            indices[index] = 0; // インデックスをリセット
+            typeWriter(document.getElementById(`typing-text${index + 2}`), index + 1);
+          }
+        }, 1000);
+      }
+    }
+
+    // ページが読み込まれたらタイピングアニメーションを開始
+    window.onload = function() {
+      const firstElement = document.getElementById("typing-text1");
+      typeWriter(firstElement, 0);
+    };
+  </script>
+
+</body>
+</html>
