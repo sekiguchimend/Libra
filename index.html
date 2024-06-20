@@ -2,6 +2,35 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+	 <script>
+    const texts = ["ライブラ[Libra]【名詞】", "HL(ヘルサルムズ・ロッド)に於いて世界の均衡を保つ", "という名目で暗躍する超人秘密結社", "その全体像は全く掴めておらず、もしひとたび正確な","情報が流れれば、闇の世界から億の買値すら付くという。"];
+    let indices = [0, 0, 0, 0,0];
+
+    function typeWriter(element, index) {
+      element.textContent += texts[index][indices[index]];
+
+      indices[index]++;
+
+      if (indices[index] < texts[index].length) {
+        setTimeout(() => typeWriter(element, index), 80); // 200ミリ秒ごとに次の文字を表示
+      } else {
+        // 上の段が終わったら、次の段に移るために1秒待つ
+        setTimeout(() => {
+          // 次の段があれば実行
+          if (index < texts.length - 1) {
+            indices[index] = 0; // インデックスをリセット
+            typeWriter(document.getElementById(`typing-text${index + 2}`), index + 1);
+          }
+        }, 1000);
+      }
+    }
+
+    // ページが読み込まれたらタイピングアニメーションを開始
+    window.onload = function() {
+      const firstElement = document.getElementById("typing-text1");
+      typeWriter(firstElement, 0);
+    };
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Libra</title>
@@ -111,35 +140,7 @@
   <div class="button_line004">
     <a href="anime.html">start</a>
   </div>
-  <script>
-    const texts = ["ライブラ[Libra]【名詞】", "HL(ヘルサルムズ・ロッド)に於いて世界の均衡を保つ", "という名目で暗躍する超人秘密結社", "その全体像は全く掴めておらず、もしひとたび正確な","情報が流れれば、闇の世界から億の買値すら付くという。"];
-    let indices = [0, 0, 0, 0,0];
-
-    function typeWriter(element, index) {
-      element.textContent += texts[index][indices[index]];
-
-      indices[index]++;
-
-      if (indices[index] < texts[index].length) {
-        setTimeout(() => typeWriter(element, index), 80); // 200ミリ秒ごとに次の文字を表示
-      } else {
-        // 上の段が終わったら、次の段に移るために1秒待つ
-        setTimeout(() => {
-          // 次の段があれば実行
-          if (index < texts.length - 1) {
-            indices[index] = 0; // インデックスをリセット
-            typeWriter(document.getElementById(`typing-text${index + 2}`), index + 1);
-          }
-        }, 1000);
-      }
-    }
-
-    // ページが読み込まれたらタイピングアニメーションを開始
-    window.onload = function() {
-      const firstElement = document.getElementById("typing-text1");
-      typeWriter(firstElement, 0);
-    };
-  </script>
+ 
 
 </body>
 </html>
