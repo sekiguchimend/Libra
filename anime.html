@@ -1,6 +1,24 @@
 <!DOCTYPE html>
 <html>
   <head>
+      <script>
+      function startFadeOutAfterDelay() {
+        // Delay for 3 seconds (3000 milliseconds) before starting the fade-out
+        setTimeout(function () {
+          startFadeOut();
+        }, 2500);
+      }
+
+      function startFadeOut() {
+        var videoContainer = document.getElementById("videoContainer");
+        videoContainer.classList.add("fade-out");
+
+        // Listen for the opacity transition to end and remove the video container
+        videoContainer.addEventListener("transitionend", function () {
+          videoContainer.remove();
+        });
+      }
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Libra</title>
@@ -340,23 +358,6 @@ html, body, .page {
       </div>
     </div>
     
-    <script>
-      function startFadeOutAfterDelay() {
-        // Delay for 3 seconds (3000 milliseconds) before starting the fade-out
-        setTimeout(function () {
-          startFadeOut();
-        }, 2500);
-      }
-
-      function startFadeOut() {
-        var videoContainer = document.getElementById("videoContainer");
-        videoContainer.classList.add("fade-out");
-
-        // Listen for the opacity transition to end and remove the video container
-        videoContainer.addEventListener("transitionend", function () {
-          videoContainer.remove();
-        });
-      }
-    </script>
+  
   </body>
 </html>
