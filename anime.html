@@ -1,26 +1,37 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script>
-function startFadeOut() {
-  var videoContainer = document.getElementById("videoContainer");
-  videoContainer.classList.add("fade-out");
+   <script>
+      function startFadeOutAfterDelay() {
+        startFadeOut();
+      }
 
-  // Listen for the opacity transition to end and remove the video container
-  videoContainer.addEventListener("transitionend", function () {
-    videoContainer.remove();
-    // ビデオのフェードアウトが完了したら、ページコンテンツを表示する
-    showPageContent();
-  });
-}
+      function startFadeOut() {
+        var videoContainer = document.getElementById("videoContainer");
+        videoContainer.classList.add("fade-out");
 
-function showPageContent() {
-  var pageElements = document.getElementsByClassName("page");
-  for (var i = 0; i < pageElements.length; i++) {
-    pageElements[i].style.display = "block";
-  }
-}
-      </script>
+        // ビデオの再生を停止する
+        var video = document.getElementById("backgroundVideo");
+        video.pause();
+
+        // Listen for the opacity transition to end and remove the video container
+        videoContainer.addEventListener("transitionend", function () {
+          videoContainer.remove();
+          showPageContent();
+        });
+      }
+
+      function showPageContent() {
+        var pageElements = document.getElementsByClassName("page");
+        for (var i = 0; i < pageElements.length; i++) {
+          pageElements[i].style.display = "block";
+        }
+      }
+
+      // ビデオの読み込みが完了したら、startFadeOutAfterDelay()関数を呼び出す
+      var video = document.getElementById("backgroundVideo");
+      video.addEventListener("loadeddata", startFadeOutAfterDelay);
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Libra</title>
